@@ -1,5 +1,7 @@
 package com.thotsakan.sudokusolver.ui;
 
+import java.util.Random;
+
 final class Board {
 
     private int[][] cells;
@@ -12,7 +14,17 @@ final class Board {
 
     private int EMPTY_CELL = 0;
 
-    private int[] CELL_VALUES = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+    private static final int[] CELL_VALUES = new int[]{1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    private static void randomizeCellValues() {
+        Random random = new Random(System.currentTimeMillis());
+        for (int i = 8; i > 0; i--) {
+            int j = random.nextInt(i);
+            int temp = CELL_VALUES[i];
+            CELL_VALUES[i] = CELL_VALUES[j];
+            CELL_VALUES[j] = temp;
+        }
+    }
 
     protected Board(int boardSize, int blockSize) {
         this.boardSize = boardSize;
@@ -55,13 +67,13 @@ final class Board {
     private boolean isValidAssignment(int row, int col, int value) {
         // validate row
         for (int i = 0; i < boardSize; i++) {
-            if (cells[row][i] == value && i != col) {
+            if (cells[row][i] == value) {
                 return false;
             }
         }
         // validate column
         for (int i = 0; i < boardSize; i++) {
-            if (cells[i][col] == value && i != row) {
+            if (cells[i][col] == value) {
                 return false;
             }
         }
@@ -72,7 +84,7 @@ final class Board {
             for (int j = 0; j < blockSize; j++) {
                 int curRow = i + blockRow;
                 int curCol = j + blockCol;
-                if (cells[curRow][curCol] == value && curRow != row && curCol != col) {
+                if (cells[curRow][curCol] == value) {
                     return false;
                 }
             }
@@ -95,6 +107,9 @@ final class Board {
         if (!isValueValid(value)) {
             return false;
         }
+        if (cells[row][col] == value) {
+            return true;
+        }
         if (value != EMPTY_CELL && !isValidAssignment(row, col, value)) {
             return false;
         }
@@ -103,7 +118,7 @@ final class Board {
         return true;
     }
 
-    public void solveBoard() {
+    public boolean solveBoard() {
         // set cells read only
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
@@ -114,7 +129,7 @@ final class Board {
         }
 
         // solve the board
-        solve();
+        return solve();
     }
 
     public void resetBoard() {
@@ -124,6 +139,7 @@ final class Board {
                 readOnly[i][j] = false;
             }
         }
+        randomizeCellValues();
     }
 
     public int[] getBundleCells() {

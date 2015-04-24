@@ -121,8 +121,8 @@ public final class BoardView extends View {
         cellBorderPaint.setStrokeWidth(5);
         for (int i = 0; i <= numBlocks; i++) {
             float blockEnd = i * blockLen;
-            canvas.drawLine(blockEnd, 0, blockEnd, boardLen, cellBorderPaint); // vertical
-            canvas.drawLine(0, blockEnd, boardLen, blockEnd, cellBorderPaint); // horizontal
+            canvas.drawLine(blockEnd, 0, blockEnd, boardLen, cellBorderPaint);
+            canvas.drawLine(0, blockEnd, boardLen, blockEnd, cellBorderPaint);
         }
 
         super.onDraw(canvas);
@@ -163,8 +163,13 @@ public final class BoardView extends View {
     public void solve() {
         touchedBoardRow = INVALID_CELL;
         touchedBoardCol = INVALID_CELL;
-        board.solveBoard();
-        invalidate();
+        if (board.solveBoard()) {
+            invalidate();
+        } else {
+            Toast toast = Toast.makeText(getContext(), "Sorry. Unable to solve this puzzle.", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+        }
     }
 
     public void reset() {
