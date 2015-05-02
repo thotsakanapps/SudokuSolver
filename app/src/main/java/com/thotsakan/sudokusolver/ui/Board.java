@@ -31,6 +31,7 @@ final class Board {
         this.blockSize = blockSize;
         cells = new int[boardSize][boardSize];
         readOnly = new boolean[boardSize][boardSize];
+        randomizeCellValues();
     }
 
     private boolean solve() {
